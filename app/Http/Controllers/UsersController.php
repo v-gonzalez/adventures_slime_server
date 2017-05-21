@@ -8,6 +8,9 @@ use App\Users;
 class UsersController extends Controller
 {
 
+    public function show($id){
+
+    }
     public function destroy($id)
     {
         //
