@@ -16,4 +16,5 @@ use Illuminate\Http\Request;
 Route::resource('users', 'UsersController');
 Route::get('user/getAll', 'UsersController@getAll');
 Route::post('user/update/{id}', 'UsersController@update');
+Route::post('user/store', 'UsersController@store');
 Route::get('user/getById/{id}', 'UsersController@getById');
