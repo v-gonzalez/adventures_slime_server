@@ -16,9 +16,11 @@ class CreateTables extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->increments('user_id');
             $table->string('nickname', 50);
+            $table->string('password', 255);
             $table->string('device_id',50);
             $table->string('phone', 50);
             $table->string('email', 50);
+            $table->string('remember_token', 255)->nullable();
             $table->timestamps();
         });
         Schema::create('friends', function (Blueprint $table) {

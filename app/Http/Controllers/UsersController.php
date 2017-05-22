@@ -5,9 +5,26 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Validator;
 use App\Users;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 class UsersController extends Controller
 {
 
+
+    public function login(Request $request){
+        $inputData = $request->all();
+        if ( Auth::attempt([
+                'nickname' => $inputData["nickname"], 
+                'password' => $inputData['password']]) ){
+            return uniqid();
+        }else{
+            return "wrong";
+        }
+    }
+    public function logout(){
+        Auth::logout();
+        return "ok";
+    }
     public function show($id){
 
     }
@@ -66,6 +83,7 @@ class UsersController extends Controller
         $rules = array(
             'nickname'      => 'sometimes|string',
             'device_id'     => 'sometimes|string',
+            'password'      => 'sometimes|string',
             'phone'         => 'sometimes|string',
             'email'         => 'sometimes|email',
         );
@@ -93,6 +111,7 @@ class UsersController extends Controller
         $user = Users::find($id);
         if ($user){
             $inputData = $request->input();
+            $inputData['password'] =  Hash::make($inputData['password']);
             $user->fill($inputData);
             $user->save();
             $data['Result'] = $user;
@@ -115,6 +134,7 @@ class UsersController extends Controller
         //Validation rules
         $rules = array(
             'nickname'          => 'required|unique:users',
+            'password'          => 'required|string',
             'device_id'         => 'required|string',
             'phone'             => 'required|string',
             'email'             => 'required|email'
@@ -122,6 +142,7 @@ class UsersController extends Controller
         $messages = array(
             'nickname.required'     => 'Nickname required',
             'nickname.unique'       => 'Nickname already taken',
+            'password.required'     => 'Password required',
             'device_id.required'    => 'DeviceId required',
             'phone.required'        => 'Phone number required'
         );
@@ -138,6 +159,7 @@ class UsersController extends Controller
         
         $user = new Users;
         $inputData = $request->input();
+        $inputData['password'] =  Hash::make($inputData['password']);
         $user->fill($inputData);
         $user->save();
         $data['Result']     = $user;
