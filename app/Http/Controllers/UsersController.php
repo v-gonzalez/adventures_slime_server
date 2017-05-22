@@ -27,13 +27,13 @@ class UsersController extends Controller
             $data['Code'] = 404;
             $data['Error'] = true;
             $data['Message'] = 'There is not users at this moment.';
-            return response()->json($data, 404);
+            return null;
         }
         $data['Result'] = $user;
         $data['Code'] = 200;
         $data['Error'] = false;
         $data['Message'] = 'User found';
-        return response()->json($data, 200);
+        return response()->json($user, 200);
     }
 
     public function getAll(Request $request){
@@ -47,13 +47,13 @@ class UsersController extends Controller
             $data['Code'] = 404;
             $data['Error'] = true;
             $data['Message'] = 'There is not users at this moment.';
-            return response()->json($data, 404);
+            return null;
         }
         $data['Result'] = $users;
         $data['Code'] = 200;
         $data['Error'] = false;
         $data['Message'] = 'Users found';
-        return response()->json($data, 200);
+        return response()->json($users, 200);
     }
     public function update(Request $request, $id)
     {
@@ -77,7 +77,7 @@ class UsersController extends Controller
             $data['Error'] = true;
             $data['Message'] = 'Please verify the information and fill the fields correctly';
             $data['ValidationErrors'] = $validator->messages()->toJson();
-            return response()->json($data, 400);
+            return null;
         }
         $duplicatedNickname = $request->input('nickname');
         if(!empty($duplicatedNickname)){
@@ -87,18 +87,23 @@ class UsersController extends Controller
                 $data['Code'] = 500;
                 $data['Error'] = true;
                 $data['Message'] = 'Nickname already taken';
-                return response()->json($data, 500);
+                return null;
             }
         }
         $user = Users::find($id);
-        $inputData = $request->input();
-        $user->fill($inputData);
-        $user->save();
-        $data['Result'] = $user;
-        $data['Code'] = 200;
-        $data['Error'] = false;
-        $data['Message'] = 'User updated';
-        return response()->json($data, 200);
+        if ($user){
+            $inputData = $request->input();
+            $user->fill($inputData);
+            $user->save();
+            $data['Result'] = $user;
+            $data['Code'] = 200;
+            $data['Error'] = false;
+            $data['Message'] = 'User updated';
+            return response()->json($user, 200);
+        }else{
+            return null;
+        }
+        
     }
     public function store(Request $request)
     {
@@ -128,7 +133,7 @@ class UsersController extends Controller
             $data['Error'] = true;
             $data['Message'] = 'Please verify the information and fill the fields correctly';
             $data['ValidationErrors'] = $validator->messages()->toJson();
-            return response()->json($data, 400);
+            return null;
         }
         
         $user = new Users;
@@ -139,6 +144,6 @@ class UsersController extends Controller
         $data['Code']       = 200;
         $data['Error']      = false;
         $data['Message']    = null;
-        return response()->json($data, 200);
+        return response()->json($user, 200);
     }
 }
