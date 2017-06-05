@@ -71,6 +71,9 @@ class CreateTables extends Migration
             $table->integer('cash_points')->unsigned();
             $table->integer('longitude')->unsigned()->nullable();
             $table->integer('latitude')->unsigned()->nullable();
+            $table->string('shape', 10);
+            $table->string('color', 10);
+            $table->string('eye', 10);
             $table->timestamps();
         });
         Schema::create('dungeons', function (Blueprint $table) {

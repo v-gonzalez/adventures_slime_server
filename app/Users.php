@@ -26,4 +26,7 @@ class Users extends Model implements AuthenticatableContract,
 	public function friendsFrom(){
 		return $this->hasMany('App\Friends','friend_from','user_id');
 	}
+	public function items(){
+		return $this->hasMany('App\ItemsUsers','user_id','user_id');
+	}
 }

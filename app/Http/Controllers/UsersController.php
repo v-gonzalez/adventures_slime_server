@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 class UsersController extends Controller
 {
-
-
     public function login(Request $request){
         $inputData = $request->all();
         if ( Auth::attempt([
@@ -26,11 +24,8 @@ class UsersController extends Controller
         return "ok";
     }
     public function show($id){
-
     }
-    public function destroy($id)
-    {
-        //
+    public function destroy($id){
     }
     public function getById($id){
         $data['Result'] = null;
