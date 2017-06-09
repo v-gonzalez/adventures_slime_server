@@ -21,7 +21,7 @@ class SleepingUsersController extends Controller
             $data['Result'] = null;
             $data['Code'] = 404;
             $data['Error'] = true;
-            $data['Message'] = 'There is not users profiles at this moment.';
+            $data['Message'] = 'There is not sleeping user at this moment.';
             return null;
         }
         $data['Result'] = $sleepingUser;

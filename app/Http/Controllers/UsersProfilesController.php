@@ -10,18 +10,18 @@ use Illuminate\Support\Facades\Hash;
 
 class UsersProfilesController extends Controller
 {
-    public function getById($id){
+    public function getByUserId($id){
         $data['Result'] = null;
         $data['Code'] = 500;
         $data['Error'] = true;
         $data['Message'] = 'Ha ocurrido un error inesperado';
 
-        $userProfile = UsersProfiles::find($id);
+        $userProfile = UsersProfiles::where("user_id","=",$id)->first();
         if ($userProfile === null){
             $data['Result'] = null;
             $data['Code'] = 404;
             $data['Error'] = true;
-            $data['Message'] = 'There is not users profiles at this moment.';
+            $data['Message'] = 'There are not users profiles at this moment.';
             return null;
         }
         $data['Result'] = $userProfile;

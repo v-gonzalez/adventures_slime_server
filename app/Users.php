@@ -29,4 +29,16 @@ class Users extends Model implements AuthenticatableContract,
 	public function items(){
 		return $this->hasMany('App\ItemsUsers','user_id','user_id');
 	}
+	public function dungeons(){
+		return $this->hasMany('App\DungeonsUsers','user_id','user_id');
+	}
+	public function duels_from(){
+		return $this->hasMany('App\DuelsUsers','user_from_id','user_id');
+	}
+	public function duels_to(){
+		return $this->hasMany('App\DuelsUsers','user_to_id','user_id');
+	}
+	public function food(){
+		return $this->hasMany('App\FoodUsers','user_id','user_id');
+	}
 }
