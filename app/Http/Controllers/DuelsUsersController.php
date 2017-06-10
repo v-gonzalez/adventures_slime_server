@@ -30,7 +30,99 @@ class DuelsUsersController extends Controller
         $data['Message'] = 'duelsusers found';
         return response()->json($duelsUsers, 200);
     }
+    public function getAllDuelsByUserId($id){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
+        
+        $duels = DuelsUsers::where('user_from_id', '=', $id)->orWhere('user_to_id', '=', $id)->orderBy('status','desc')->orderBy('created_at','desc')->get();
 
+        if ($duels === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There are not duels at this moment.';
+            return null;
+        }
+        $data['Result'] = $duels;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'duels found';
+        return response()->json($duels, 200);
+    }
+    public function getWonDuelsByUserId($id){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
+        
+        $duels = DuelsUsers::where( 'user_won', '=', $id )->orderBy('created_at','desc')->get();
+
+        if ($duels === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There are not duels at this moment.';
+            return null;
+        }
+        $data['Result'] = $duels;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'duels found';
+        return response()->json($duels, 200);
+    }
+    public function setCompleted($id){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
+        
+        $duels = DuelsUsers::find($id);
+        if ($duels){
+            $duels['status'] = 'completed';
+            $duels->save();
+        }
+        $data['Result'] = $duels;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'duels found';
+        return response()->json($duels, 200);
+    }
+    public function setPending(Request $request, $id){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
+        
+        $duels = DuelsUsers::find($id);
+        if ($duels){
+            $duels['status'] = 'pending';
+            $duels->save();
+        }
+        $data['Result'] = $duels;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'duels found';
+        return response()->json($duels, 200);
+    }
+    public function setDeclined(Request $request, $id){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
+        
+        $duels = DuelsUsers::find($id);
+        if ($duels){
+            $duels['status'] = 'declined';
+            $duels->save();
+        }
+        $data['Result'] = $duels;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'duels found';
+        return response()->json($duels, 200);
+    }
     public function update(Request $request, $id)
     {
         $data['Result'] = null;
@@ -111,9 +203,7 @@ class DuelsUsersController extends Controller
 
         $duelsUsers = DuelsUsers::find($id);
         if ($duelsUsers){
-        	$duelsUsers['status'] = 'disabled';
-            $duelsUsers->fill($inputData);
-            $duelsUsers->save();
+            $duelsUsers->delete();
             $data['Result'] = $duelsUsers;
             $data['Code'] = 200;
             $data['Error'] = false;

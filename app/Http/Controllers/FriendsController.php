@@ -30,7 +30,115 @@ class FriendsController extends Controller
         $data['Message'] = 'Friends found';
         return response()->json($friends, 200);
     }
+    public function getAllFriendsByUserId($id){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
+        
+        $friends = Friends::where('friend_from', '=', $id)->orWhere('friend_to', '=', $id)->orderBy('status','desc')->get();
 
+        if ($friends === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There are not friends at this moment.';
+            return null;
+        }
+        $data['Result'] = $friends;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'friends found';
+        return response()->json($friends, 200);
+    }
+    public function getAcceptedFriendsByUserId($id){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
+        
+        $friends = Friends::where( 'status', '=', 'accepted' )->where( function ( $query ) use ( $id ){
+            $query->where('friend_from', '=', $id)->where('friend_to', '=', $id);
+        })->get();
+
+        if ($friends === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There are not friends at this moment.';
+            return null;
+        }
+        $data['Result'] = $friends;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'friends found';
+        return response()->json($friends, 200);
+    }
+    public function getPendingFriendsByUserId($id){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
+
+        $friends = Friends::where( 'status', '=', 'pending' )->where( function ( $query ) use ( $id ){
+            $query->where('friend_from', '=', $id)->where('friend_to', '=', $id);
+        })->get();
+
+        if ($friends === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There are not friends at this moment.';
+            return null;
+        }
+        $data['Result'] = $friends;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'friends found';
+        return response()->json($friends, 200);
+    }
+    public function getDeclinedFriendsByUserId($id){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
+
+        $friends = Friends::where( 'status', '=', 'declined' )->where( function ( $query ) use ( $id ){
+            $query->where('friend_from', '=', $id)->where('friend_to', '=', $id);
+        })->get();
+
+        if ($friends === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There are not friends at this moment.';
+            return null;
+        }
+        $data['Result'] = $friends;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'friends found';
+        return response()->json($friends, 200);
+    }
+    public function removeFriend(Request $request, $id)
+    {
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Unexpected Error';
+
+        $friends = Friends::where("friend_from","=",$id)->orWhere("friend_to","=",$id)->first();
+        if ($friends){
+            $friends->delete();
+            $data['Result'] = $friends;
+            $data['Code'] = 200;
+            $data['Error'] = false;
+            $data['Message'] = 'friend deleted';
+            return response()->json($friends, 200);
+        }else{
+            return null;
+        }
+    }
     public function update(Request $request, $id)
     {
         $data['Result'] = null;

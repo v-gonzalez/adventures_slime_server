@@ -31,7 +31,52 @@ class ItemsDungeonsDropsController extends Controller
         $data['Message'] = 'Items dungeons drop found';
         return response()->json($itemsDungeonsDrop, 200);
     }
+    public function getItemsByDungeon($id){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
 
+        $dungeonItems = ItemsDungeonsDrops::where("dungeon_id","=",$id)->get();
+        if ($dungeonItems === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There is not dungeon items at this moment.';
+            return null;
+        }
+        $data['Result'] = $dungeonItems;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'dungeon items found';
+        return response()->json($dungeonItems, 200);
+    }
+    public function getItemsByDungeonsIds($ids){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
+
+        $json_ids = json_decode($ids);
+
+        $items = [];
+        foreach ($json_ids as $id) {
+            $items[] = ItemsDungeonsDrops::where("dungeon_id","=",$id)->get();
+        }
+        
+        if ($items === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There are not items at this moment.';
+            return null;
+        }
+        $data['Result'] = $items;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'items found';
+        return response()->json($items, 200);
+    }
     public function update(Request $request, $id)
     {
         $data['Result'] = null;
@@ -112,9 +157,7 @@ class ItemsDungeonsDropsController extends Controller
 
         $itemsDungeonsDrop = ItemsDungeonsDrops::find($id);
         if ($itemsDungeonsDrop){
-        	$itemsDungeonsDrop['status'] = 'disabled';
-            $itemsDungeonsDrop->fill($inputData);
-            $itemsDungeonsDrop->save();
+            $itemsDungeonsDrop->delete();
             $data['Result'] = $itemsDungeonsDrop;
             $data['Code'] = 200;
             $data['Error'] = false;

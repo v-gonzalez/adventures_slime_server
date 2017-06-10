@@ -30,7 +30,126 @@ class DungeonsUsersController extends Controller
         $data['Message'] = 'DungeonsUsers found';
         return response()->json($dungeonsUsers, 200);
     }
+    public function getAllDungeonsByUserId($id){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Unexpected error';
 
+        $dungeonsUsers = DungeonsUsers::where("user_id","=",$id)->orderBy("init_date",'desc')->get();
+        if ($dungeonsUsers === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There is not dungeonsUsers at this moment.';
+            return null;
+        }
+        $data['Result'] = $dungeonsUsers;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'dungeonsUsers found';
+        return response()->json($dungeonsUsers, 200);
+    }
+    public function getActiveDungeonByUserId($id){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Unexpected error';
+
+        $dungeonsUsers = DungeonsUsers::where("user_id","=",$id)->where("status",'=','active')->first();
+        if ($dungeonsUsers === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There is not dungeonsUsers at this moment.';
+            return null;
+        }
+        $data['Result'] = $dungeonsUsers;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'dungeonsUsers found';
+        return response()->json($dungeonsUsers, 200);
+    }
+    public function getLostDungeonsByUserId($id){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Unexpected error';
+
+        $dungeonsUsers = DungeonsUsers::where("user_id","=",$id)->where("status",'=','lost')->get();
+        if ($dungeonsUsers === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There is not dungeonsUsers at this moment.';
+            return null;
+        }
+        $data['Result'] = $dungeonsUsers;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'dungeonsUsers found';
+        return response()->json($dungeonsUsers, 200);
+    }
+    public function getCompleteDungeonsByUserId($id){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Unexpected error';
+
+        $dungeonsUsers = DungeonsUsers::where("user_id","=",$id)->where("status",'=','completed')->get();
+        if ($dungeonsUsers === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There is not dungeonsUsers at this moment.';
+            return null;
+        }
+        $data['Result'] = $dungeonsUsers;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'dungeonsUsers found';
+        return response()->json($dungeonsUsers, 200);
+    }
+    public function setCompleted(Request $request, $id)
+    {
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Unexpected Error';
+
+        $dungeonsUsers = DungeonsUsers::find($id);
+        if ($dungeonsUsers){
+            $dungeonsUsers['status'] = 'completed';
+            $dungeonsUsers->save();
+            $data['Result'] = $dungeonsUsers;
+            $data['Code'] = 200;
+            $data['Error'] = false;
+            $data['Message'] = 'DungeonsUsers updated';
+            return response()->json($dungeonsUsers, 200);
+        }else{
+            return null;
+        }
+    }
+    public function setLost(Request $request, $id)
+    {
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Unexpected Error';
+
+        $dungeonsUsers = DungeonsUsers::find($id);
+        if ($dungeonsUsers){
+            $dungeonsUsers['status'] = 'lost';
+            $dungeonsUsers->save();
+            $data['Result'] = $dungeonsUsers;
+            $data['Code'] = 200;
+            $data['Error'] = false;
+            $data['Message'] = 'DungeonsUsers updated';
+            return response()->json($dungeonsUsers, 200);
+        }else{
+            return null;
+        }
+    }
     public function update(Request $request, $id)
     {
         $data['Result'] = null;
@@ -111,9 +230,7 @@ class DungeonsUsersController extends Controller
 
         $dungeonsUsers = DungeonsUsers::find($id);
         if ($dungeonsUsers){
-        	$dungeonsUsers['status'] = 'disabled';
-            $dungeonsUsers->fill($inputData);
-            $dungeonsUsers->save();
+            $dungeonsUsers->delete();
             $data['Result'] = $dungeonsUsers;
             $data['Code'] = 200;
             $data['Error'] = false;

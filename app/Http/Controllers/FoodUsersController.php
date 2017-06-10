@@ -14,14 +14,14 @@ class FoodUsersController extends Controller
         $data['Result'] = null;
         $data['Code'] = 500;
         $data['Error'] = true;
-        $data['Message'] = 'Ha ocurrido un error inesperado';
+        $data['Message'] = 'Unexpected error';
 
         $foodUsers = FoodUsers::find($id);
         if ($foodUsers === null){
             $data['Result'] = null;
             $data['Code'] = 404;
             $data['Error'] = true;
-            $data['Message'] = 'There are not food users at this moment.';
+            $data['Message'] = 'There is not food at this moment.';
             return null;
         }
         $data['Result'] = $foodUsers;
@@ -30,7 +30,66 @@ class FoodUsersController extends Controller
         $data['Message'] = 'food users found';
         return response()->json($foodUsers, 200);
     }
+    public function getByUserId($id){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Unexpected error';
 
+        $food = FoodUsers::where("user_id","=",$id)->get();
+        if ($food === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There is not food at this moment.';
+            return null;
+        }
+        $data['Result'] = $food;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'food found';
+        return response()->json($food, 200);
+    }
+    public function setExpired($id)
+    {
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Unexpected Error';
+
+        $foodUsers = FoodUsers::find($id);
+        if ($foodUsers){
+            $foodUsers['status'] = 'expired';
+            $foodUsers->save();
+            $data['Result'] = $foodUsers;
+            $data['Code'] = 200;
+            $data['Error'] = false;
+            $data['Message'] = 'food user updated';
+            return response()->json($foodUsers, 200);
+        }else{
+            return null;
+        }
+    }
+    public function setBad($id)
+    {
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Unexpected Error';
+
+        $foodUsers = FoodUsers::find($id);
+        if ($foodUsers){
+            $foodUsers['status'] = 'bad';
+            $foodUsers->save();
+            $data['Result'] = $foodUsers;
+            $data['Code'] = 200;
+            $data['Error'] = false;
+            $data['Message'] = 'food user updated';
+            return response()->json($foodUsers, 200);
+        }else{
+            return null;
+        }
+    }
     public function update(Request $request, $id)
     {
         $data['Result'] = null;
@@ -111,9 +170,7 @@ class FoodUsersController extends Controller
 
         $foodUsers = FoodUsers::find($id);
         if ($foodUsers){
-        	$foodUsers['status'] = 'disabled';
-            $foodUsers->fill($inputData);
-            $foodUsers->save();
+            $foodUsers->delete();
             $data['Result'] = $foodUsers;
             $data['Code'] = 200;
             $data['Error'] = false;

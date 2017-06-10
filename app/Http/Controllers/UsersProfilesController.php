@@ -30,7 +30,32 @@ class UsersProfilesController extends Controller
         $data['Message'] = 'User profile found';
         return response()->json($userProfile, 200);
     }
+    public function getByUserIds($ids){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
 
+        $json_ids = json_decode($ids);
+
+        $userProfiles = [];
+        foreach ($json_ids as $id) {
+            $userProfiles[] = UsersProfiles::where("user_id","=",$id)->first();
+        }
+        
+        if ($userProfiles === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There are not users profiles at this moment.';
+            return null;
+        }
+        $data['Result'] = $userProfiles;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'User profiles found';
+        return response()->json($userProfiles, 200);
+    }
     public function update(Request $request, $id)
     {
         $data['Result'] = null;

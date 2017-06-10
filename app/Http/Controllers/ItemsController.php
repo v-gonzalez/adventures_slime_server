@@ -30,7 +30,66 @@ class ItemsController extends Controller
         $data['Message'] = 'Items found';
         return response()->json($items, 200);
     }
+    public function getByName($name){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
 
+        $items = Items::where("name","LIKE","%".$name."%")->get();
+        if ($items === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There are not items at this moment.';
+            return null;
+        }
+        $data['Result'] = $items;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'Items found';
+        return response()->json($items, 200);
+    }
+    public function getByType($type){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
+
+        $items = Items::where("type","=",$type)->get();
+        if ($items === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There are not items at this moment.';
+            return null;
+        }
+        $data['Result'] = $items;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'Items found';
+        return response()->json($items, 200);
+    }
+    public function getAll(){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
+
+        $items = Items::all();
+        if ($items === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There are not items at this moment.';
+            return null;
+        }
+        $data['Result'] = $items;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'Items found';
+        return response()->json($items, 200);
+    }
     public function update(Request $request, $id)
     {
         $data['Result'] = null;
@@ -111,13 +170,11 @@ class ItemsController extends Controller
 
         $items = Items::find($id);
         if ($items){
-        	$items['status'] = 'disabled';
-            $items->fill($inputData);
-            $items->save();
+            $items->delete();
             $data['Result'] = $items;
             $data['Code'] = 200;
             $data['Error'] = false;
-            $data['Message'] = 'item dungeon drop deleted';
+            $data['Message'] = 'item deleted';
             return response()->json($items, 200);
         }else{
             return null;

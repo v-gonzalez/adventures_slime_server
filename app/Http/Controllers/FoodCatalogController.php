@@ -32,6 +32,46 @@ class FoodCatalogController extends Controller
         $data['Message'] = 'foodCatalogs found';
         return response()->json($foodCatalog, 200);
     }
+    public function getByName($name){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
+
+        $foodCatalog = FoodCatalog::where("name","LIKE" "%".$id."%")->get();
+        if ($foodCatalog === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There are not foodCatalogs at this moment.';
+            return null;
+        }
+        $data['Result'] = $foodCatalog;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'foodCatalogs found';
+        return response()->json($foodCatalog, 200);
+    }
+    public function getAll(){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
+
+        $foodCatalog = FoodCatalog::all();
+        if ($foodCatalog === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There are not foodCatalogs at this moment.';
+            return null;
+        }
+        $data['Result'] = $foodCatalog;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'foodCatalogs found';
+        return response()->json($foodCatalog, 200);
+    }
 
     public function update(Request $request, $id)
     {
@@ -113,9 +153,7 @@ class FoodCatalogController extends Controller
 
         $foodCatalog = FoodCatalog::find($id);
         if ($foodCatalog){
-        	$foodCatalog['status'] = 'disabled';
-            $foodCatalog->fill($inputData);
-            $foodCatalog->save();
+            $foodCatalog->delete();
             $data['Result'] = $foodCatalog;
             $data['Code'] = 200;
             $data['Error'] = false;

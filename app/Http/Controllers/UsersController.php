@@ -47,7 +47,32 @@ class UsersController extends Controller
         $data['Message'] = 'User found';
         return response()->json($user, 200);
     }
+    public function getByUserIds($ids){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
 
+        $json_ids = json_decode($ids);
+
+        $users = [];
+        foreach ($json_ids as $id) {
+            $users[] = Users::where("user_id","=",$id)->first();
+        }
+        
+        if ($users === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There are not users at this moment.';
+            return null;
+        }
+        $data['Result'] = $users;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'Users found';
+        return response()->json($users, 200);
+    }
     public function getAll(Request $request){
         $data['Result'] = null;
         $data['Code'] = 500;

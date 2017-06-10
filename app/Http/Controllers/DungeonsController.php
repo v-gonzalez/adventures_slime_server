@@ -30,7 +30,66 @@ class DungeonsController extends Controller
         $data['Message'] = 'dungeons found';
         return response()->json($dungeons, 200);
     }
+    public function getAll(){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
 
+        $dungeons = Dungeons::all()->orderBy('created_at','desc');
+        if ($dungeons === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There are not dungeons at this moment.';
+            return null;
+        }
+        $data['Result'] = $dungeons;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'dungeons found';
+        return response()->json($dungeons, 200);
+    }
+    public function getByName($name){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
+
+        $dungeons = Dungeons::where('name','LIKE', '%'.$name.'%')->orderBy('created_at','desc')->get();
+        if ($dungeons === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There are not dungeons at this moment.';
+            return null;
+        }
+        $data['Result'] = $dungeons;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'dungeons found';
+        return response()->json($dungeons, 200);
+    }
+    public function getByStatus($status){
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Ha ocurrido un error inesperado';
+
+        $dungeons = Dungeons::where('status','=', $status)->orderBy('created_at','desc')->get();
+        if ($dungeons === null){
+            $data['Result'] = null;
+            $data['Code'] = 404;
+            $data['Error'] = true;
+            $data['Message'] = 'There are not dungeons at this moment.';
+            return null;
+        }
+        $data['Result'] = $dungeons;
+        $data['Code'] = 200;
+        $data['Error'] = false;
+        $data['Message'] = 'dungeons found';
+        return response()->json($dungeons, 200);
+    }
     public function update(Request $request, $id)
     {
         $data['Result'] = null;
@@ -111,9 +170,7 @@ class DungeonsController extends Controller
 
         $dungeons = Dungeons::find($id);
         if ($dungeons){
-        	$dungeons['status'] = 'disabled';
-            $dungeons->fill($inputData);
-            $dungeons->save();
+            $dungeons->delete();
             $data['Result'] = $dungeons;
             $data['Code'] = 200;
             $data['Error'] = false;
