@@ -18,7 +18,7 @@ class Users extends Model implements AuthenticatableContract,
 	
     protected $table = 'users';
 	protected $primaryKey = 'user_id';
-	protected $fillable = ['nickname','password','device_id','phone','email'];
+	protected $fillable = ['nickname','password','device_id','phone','email','remember_token'];
 	
 	public function friendsTo(){
 		return $this->hasMany('App\Friends','friend_to','user_id');

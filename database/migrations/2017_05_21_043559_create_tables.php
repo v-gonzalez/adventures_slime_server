@@ -64,7 +64,8 @@ class CreateTables extends Migration
             $table->integer('phys_dmg')->unsigned();
             $table->integer('magic_dmg')->unsigned();
             $table->integer('armor')->unsigned();
-            $table->enum('status', ['active', 'disabled', 'tired','good','energized','hungry','sleeping','sick','angry']);
+            $table->enum('status', ['active', 'disabled', 'tired','good','energized','hungry','sick','angry']);
+            $table->string("sleeping",10);
             $table->date('last_action_date');
             $table->integer('hungry_points')->unsigned();
             $table->integer('tired_points')->unsigned();
@@ -143,8 +144,8 @@ class CreateTables extends Migration
             $table->foreign('user_id')->references('user_id')->on('users');
             $table->datetime('init_date');
             $table->datetime('end_date');
-            $table->integer('tired_recovery')->unsigned();
-            $table->integer('hungry_cost')->unsigned();
+            $table->string('tired_recovery',50);
+            $table->string('hungry_cost',50);
             $table->enum('status', ['sleeping','completed','lost']); // lost by hungry issue
             $table->timestamps();
         });

@@ -5,23 +5,43 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Validator;
 use App\Users;
+use App\UsersProfiles;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 class UsersController extends Controller
 {
     public function login(Request $request){
         $inputData = $request->all();
+        $token = uniqid();
         if ( Auth::attempt([
                 'nickname' => $inputData["nickname"], 
                 'password' => $inputData['password']]) ){
-            return uniqid();
+
+            $user = Auth::user();
+            $user->remember_token = $token;
+            $user->save();
+            $userProfile = UsersProfiles::where("user_id","=",$user->user_id)->first();
+            $row['nickname']=$user->nickname;
+            $row['user_id']=$user->user_id;
+            $row['remember_token']=$user->remember_token;
+            $row['sleeping']=$userProfile->sleeping;
+            $row['status']=$userProfile->status;
+            return response()->json($row, 200);
         }else{
             return "wrong";
         }
     }
-    public function logout(){
-        Auth::logout();
-        return "ok";
+    public function logout($session, $id){
+        $user = Users::where("user_id","=",$id)->where("remember_token","=",$session)->first();
+        if ($user){
+            $user->remember_token = "";
+            $user->save();
+            Auth::logout();
+            return "ok";
+        }else { 
+            return "invalid_session";
+        }
+        
     }
     public function show($id){
     }
@@ -182,6 +202,31 @@ class UsersController extends Controller
         $inputData['password'] =  Hash::make($inputData['password']);
         $user->fill($inputData);
         $user->save();
+
+        $userProfile = new UsersProfiles;
+        $userProfile->user_id = $user->user_id;
+        $userProfile->level = 1;
+        $userProfile->experience = 0;
+        $userProfile->hp = 100;
+        $userProfile->mana = 200;
+        $userProfile->agi = 10;
+        $userProfile->str = 10;
+        $userProfile->int = 10;
+        $userProfile->phys_dmg = 15;
+        $userProfile->magic_dmg = 20;
+        $userProfile->armor = 1;
+        $userProfile->status = "active";
+        $userProfile->sleeping = "0";
+        $userProfile->last_action_date = date("Y-m-d");
+        $userProfile->hungry_points = 0;
+        $userProfile->tired_points = 0;
+        $userProfile->cash_points = 100;
+        $userProfile->longitude = 0;
+        $userProfile->latitude = 0;
+        $userProfile->shape = "";
+        $userProfile->color = "";
+        $userProfile->eye   = "";
+        $userProfile->save();
         $data['Result']     = $user;
         $data['Code']       = 200;
         $data['Error']      = false;

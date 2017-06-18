@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Validator;
 use App\SleepingUsers;
+use App\Users;
+use App\UsersProfiles;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -76,64 +78,96 @@ class SleepingUsersController extends Controller
         $data['Message'] = 'Users sleeping found';
         return response()->json($userSleepings, 200);
     }
-    public function sleepUser($id){
+    public function sleepUser(Request $request){
+        $inputData = $request->input();
+        $id = $inputData['id'];
+        $session = $inputData['session'];
+
         $data['Result'] = null;
         $data['Code'] = 500;
         $data['Error'] = true;
         $data['Message'] = 'Ha ocurrido un error inesperado';
 
-        $sleepingUser = SleepingUsers::where("user_id","=",$id)->first();
-        if (empty($sleepingUser)){
-            $newRow = new SleepingUsers;
-            $newRow['user_id'] = $id;
-            $newRow['init_date'] = new date("Y-m-d");
-            $newRow['end_date'] = date("Y-m-d", strtotime("+ 1 day"));
-            $newRow['status'] = 'sleeping';
-            $newRow['tired_recovery'] = '';
-            $newRow['hungry_cost'] = '';
-            $newRow->save();
-            $data['Result'] = $newRow;
+        $verifiedUser = Users::where("user_id","=",$id)->where("remember_token","=",$session)->first();
+        if ($verifiedUser){
+            $sleepingUser = SleepingUsers::where("user_id","=",$id)->first();
+            if (empty($sleepingUser)){
+                $newRow = new SleepingUsers;
+                $newRow['user_id'] = $id;
+                $newRow['init_date'] = date("Y-m-d");
+                $newRow['end_date'] = date("Y-m-d", strtotime("+ 1 day"));
+                $newRow['status'] = 'sleeping';
+                $newRow['tired_recovery'] = '';
+                $newRow['hungry_cost'] = '';
+                $newRow->save();
+                $userProfile = UsersProfiles::where("user_id","=",$newRow->user_id)->first();
+                $userProfile->sleeping = "1";
+                $userProfile->save();
+                return response()->json($newRow, 200);
+            }else{
+                $sleepingUser['init_date'] = date("Y-m-d");
+                $sleepingUser['end_date'] = date("Y-m-d", strtotime("+ 1 day"));
+                $sleepingUser['status'] = 'sleeping';
+                $sleepingUser['tired_recovery'] = '';
+                $sleepingUser['hungry_cost'] = '';
+                $sleepingUser->save();
+                $userProfile = UsersProfiles::where("user_id","=",$sleepingUser->user_id)->first();
+                $userProfile->sleeping = "1";
+                $userProfile->save();
+                return response()->json($sleepingUser, 200);
+            }
+            
+            $data['Code'] = 200;
+            $data['Error'] = false;
+            $data['Message'] = 'User profile found';
+            return response()->json($sleepingUser, 200);
         }else{
-            $sleepingUser['init_date'] = new date("Y-m-d");
-            $sleepingUser['end_date'] = date("Y-m-d", strtotime("+ 1 day"));
-            $sleepingUser['status'] = 'sleeping';
-            $sleepingUser['tired_recovery'] = '';
-            $sleepingUser['hungry_cost'] = '';
-            $sleepingUser->save();
-            $data['Result'] = $sleepingUser;
+            return "invalid_token";
         }
         
-        $data['Code'] = 200;
-        $data['Error'] = false;
-        $data['Message'] = 'User profile found';
-        return response()->json($sleepingUser, 200);
     }
     //pending to detect if the user lost while sleeping.
-    public function wakeUpUser($id){
+    public function wakeUpUser(Request $request){
+        $inputData = $request->input();
+        $id = $inputData['id'];
+        $session = $inputData['session'];
+
         $data['Result'] = null;
         $data['Code'] = 500;
         $data['Error'] = true;
         $data['Message'] = 'Ha ocurrido un error inesperado';
 
-        $sleepingUser = SleepingUsers::where("user_id","=",$id)->first();
-        if (!empty($sleepingUser)){
-            $sleepingUser['status'] = 'completed';
-            $sleepingUser['tired_recovery'] = date_diff($sleepingUser['init_date'],$sleepingUser['end_date'],true);
-            $sleepingUser['hungry_cost'] = date_diff($sleepingUser['init_date'],$sleepingUser['end_date'],true);
-            $sleepingUser->save();
+        $verifiedUser = Users::where("user_id","=",$id)->where("remember_token","=",$session)->first();
+        if ($verifiedUser){
+            $sleepingUser = SleepingUsers::where("user_id","=",$id)->first();
+            if (!empty($sleepingUser)){
+                $sleepingUser['status'] = 'completed';
+                $init_date = new \DateTime($sleepingUser['init_date']);
+                $end_date = new \DateTime();
+                $res = $init_date->diff($end_date)->format("%i");
+                $sleepingUser['tired_recovery'] = $res;
+                $sleepingUser['hungry_cost'] = $res;
+                $sleepingUser->save();
+                $userProfile = UsersProfiles::where("user_id","=",$sleepingUser->user_id)->first();
+                $userProfile->sleeping = "0";
+                $userProfile->save();
+            }
+            if ($sleepingUser === null){
+                $data['Result'] = null;
+                $data['Code'] = 404;
+                $data['Error'] = true;
+                $data['Message'] = 'There is not sleeping user at this moment.';
+                return null;
+            }
+            $data['Result'] = $sleepingUser;
+            $data['Code'] = 200;
+            $data['Error'] = false;
+            $data['Message'] = 'Sleeping user found';
+            return response()->json($sleepingUser, 200);
+        }else{
+            return "invalid_token";
         }
-        if ($sleepingUser === null){
-            $data['Result'] = null;
-            $data['Code'] = 404;
-            $data['Error'] = true;
-            $data['Message'] = 'There is not sleeping user at this moment.';
-            return null;
-        }
-        $data['Result'] = $sleepingUser;
-        $data['Code'] = 200;
-        $data['Error'] = false;
-        $data['Message'] = 'Sleeping user found';
-        return response()->json($sleepingUser, 200);
+        
     }
     public function update(Request $request, $id)
     {

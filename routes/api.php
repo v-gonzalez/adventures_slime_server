@@ -20,7 +20,7 @@ Route::post('user/store', 'UsersController@store');
 Route::get('user/getById/{id}', 'UsersController@getById');
 Route::get('user/getByUserIds/{ids}', 'UsersController@getByUserIds');
 Route::post('user/login', 'UsersController@login');
-Route::get('user/logout', 'UsersController@logout');
+Route::get('user/logout/{session}/{id}', 'UsersController@logout');
 
 Route::resource('usersProfiles', 'UsersProfilesController');
 Route::post('usersProfiles/delete/{id}', 'UsersProfilesController@delete');
@@ -30,14 +30,14 @@ Route::get('usersProfiles/getByUserId/{id}', 'UsersProfilesController@getByUserI
 Route::get('usersProfiles/getByUserIds/{ids}', 'UsersProfilesController@getByUserIds');
 
 Route::resource('sleepingUsers', 'SleepingUsersController');
-Route::post('sleepingUsers/delete/{id}', 'SleepingUsersController@delete');
-Route::post('sleepingUsers/update/{id}', 'SleepingUsersController@update');
+Route::post('sleepingUsers/delete/{session}/{id}', 'SleepingUsersController@delete');
+Route::post('sleepingUsers/update/{session}/{id}', 'SleepingUsersController@update');
 Route::post('sleepingUsers/store', 'SleepingUsersController@store');
 Route::get('sleepingUsers/getById/{id}', 'SleepingUsersController@getById');
-Route::get('sleepingUsers/sleepUser/{id}', 'SleepingUsersController@sleepUser');
-Route::get('sleepingUsers/wakeUpUser/{id}', 'SleepingUsersController@wakeUpUser');
-Route::get('sleepingUsers/getByUserId/{id}', 'SleepingUsersController@getByUserId');
-Route::get('sleepingUsers/getByUserIds/{ids}', 'SleepingUsersController@getByUserIds');
+Route::post('sleepingUsers/sleepUser', 'SleepingUsersController@sleepUser');
+Route::post('sleepingUsers/wakeUpUser', 'SleepingUsersController@wakeUpUser');
+Route::get('sleepingUsers/getByUserId/{session}/{id}', 'SleepingUsersController@getByUserId');
+Route::get('sleepingUsers/getByUserIds/{session}/{ids}', 'SleepingUsersController@getByUserIds');
 
 Route::resource('itemsUsers', 'ItemsUsersController');
 Route::post('itemsUsers/setBroken/{id}', 'ItemsUsersController@setBroken');
