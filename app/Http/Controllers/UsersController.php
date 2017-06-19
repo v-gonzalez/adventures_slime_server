@@ -21,11 +21,14 @@ class UsersController extends Controller
             $user->remember_token = $token;
             $user->save();
             $userProfile = UsersProfiles::where("user_id","=",$user->user_id)->first();
-            $row['nickname']=$user->nickname;
-            $row['user_id']=$user->user_id;
-            $row['remember_token']=$user->remember_token;
-            $row['sleeping']=$userProfile->sleeping;
-            $row['status']=$userProfile->status;
+            $row['nickname']        =   $user->nickname;
+            $row['user_id']         =   $user->user_id;
+            $row['remember_token']  =   $user->remember_token;
+            $row['sleeping']        =   $userProfile->sleeping;
+            $row['status']          =   $userProfile->status;
+            $row['shape']           =   $userProfile->shape;
+            $row['color']           =   $userProfile->color;
+            $row['eye']             =   $userProfile->eye;
             return response()->json($row, 200);
         }else{
             return "wrong";
@@ -38,9 +41,9 @@ class UsersController extends Controller
             $user->save();
             Auth::logout();
             return "ok";
-        }else { 
+        }else  
             return "invalid_session";
-        }
+        
         
     }
     public function show($id){

@@ -145,11 +145,18 @@ class SleepingUsersController extends Controller
                 $init_date = new \DateTime($sleepingUser['init_date']);
                 $end_date = new \DateTime();
                 $res = $init_date->diff($end_date)->format("%i");
+                $res = (int)$res/10;
                 $sleepingUser['tired_recovery'] = $res;
-                $sleepingUser['hungry_cost'] = $res;
+                $sleepingUser['hungry_cost'] = (int)($res/3);
                 $sleepingUser->save();
                 $userProfile = UsersProfiles::where("user_id","=",$sleepingUser->user_id)->first();
                 $userProfile->sleeping = "0";
+                $userProfile->tired_points += $sleepingUser['tired_recovery'];
+                $userProfile->hungry_points += $sleepingUser['hungry_cost'];
+                if ($userProfile->tired_points > 100)
+                    $userProfile->tired_points = 100;
+                if ($userProfile->hungry_points > 100)
+                    $userProfile->hungry_points = 100;
                 $userProfile->save();
             }
             if ($sleepingUser === null){

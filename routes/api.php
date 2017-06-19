@@ -28,6 +28,7 @@ Route::post('usersProfiles/update/{id}', 'UsersProfilesController@update');
 Route::post('usersProfiles/store', 'UsersProfilesController@store');
 Route::get('usersProfiles/getByUserId/{id}', 'UsersProfilesController@getByUserId');
 Route::get('usersProfiles/getByUserIds/{ids}', 'UsersProfilesController@getByUserIds');
+Route::post('usersProfiles/create_character/{id}', 'UsersProfilesController@create_character');
 
 Route::resource('sleepingUsers', 'SleepingUsersController');
 Route::post('sleepingUsers/delete/{session}/{id}', 'SleepingUsersController@delete');

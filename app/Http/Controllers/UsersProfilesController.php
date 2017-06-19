@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Validator;
 use App\UsersProfiles;
+use App\Users;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -56,6 +57,34 @@ class UsersProfilesController extends Controller
         $data['Message'] = 'User profiles found';
         return response()->json($userProfiles, 200);
     }
+    public function create_character(Request $request, $id)
+    {
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Unexpected Error';
+        $inputData = $request->input();
+        
+        $user = Users::where("user_id","=",$id)->where("remember_token","=",$inputData['session'])->first();
+        if (!$user)
+            return "invalid_session";
+
+        $userProfile = UsersProfiles::where("user_id","=",$id)->first();
+        if ($userProfile){
+            $userProfile->shape = $inputData['shape'];
+            $userProfile->eye   = $inputData['eye'];
+            $userProfile->color = $inputData['color'];
+            $userProfile->save();
+            $data['Result'] = $userProfile; 
+            $data['Code'] = 200;
+            $data['Error'] = false;
+            $data['Message'] = 'user profile updated';
+            return response()->json($userProfile, 200);
+        }else{
+            return null;
+        }
+    }
+
     public function update(Request $request, $id)
     {
         $data['Result'] = null;
