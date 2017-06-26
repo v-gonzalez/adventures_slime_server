@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Validator;
 use App\Dungeons;
+use App\Users;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -30,13 +31,18 @@ class DungeonsController extends Controller
         $data['Message'] = 'dungeons found';
         return response()->json($dungeons, 200);
     }
-    public function getAll(){
+    public function getAll(Request $request, $id){
+        $inputData = $request->input();
+
+        $user = Users::where("user_id","=",$id)->where("remember_token","=",$inputData['session'])->first();
+        if (!$user) return 'invalid_session';
+
         $data['Result'] = null;
         $data['Code'] = 500;
         $data['Error'] = true;
-        $data['Message'] = 'Ha ocurrido un error inesperado';
+        $data['Message'] = 'Unexpected error';
 
-        $dungeons = Dungeons::all()->orderBy('created_at','desc');
+        $dungeons = Dungeons::all();
         if ($dungeons === null){
             $data['Result'] = null;
             $data['Code'] = 404;

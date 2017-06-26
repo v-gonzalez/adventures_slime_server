@@ -26,7 +26,7 @@ Route::resource('usersProfiles', 'UsersProfilesController');
 Route::post('usersProfiles/delete/{id}', 'UsersProfilesController@delete');
 Route::post('usersProfiles/update/{id}', 'UsersProfilesController@update');
 Route::post('usersProfiles/store', 'UsersProfilesController@store');
-Route::get('usersProfiles/getByUserId/{id}', 'UsersProfilesController@getByUserId');
+Route::post('usersProfiles/getByUserId/{id}', 'UsersProfilesController@getByUserId');
 Route::get('usersProfiles/getByUserIds/{ids}', 'UsersProfilesController@getByUserIds');
 Route::post('usersProfiles/create_character/{id}', 'UsersProfilesController@create_character');
 
@@ -111,7 +111,7 @@ Route::post('dungeons/delete/{id}', 'DungeonsController@delete');
 Route::post('dungeons/update/{id}', 'DungeonsController@update');
 Route::post('dungeons/store', 'DungeonsController@store');
 Route::get('dungeons/getById/{id}', 'DungeonsController@getById');
-Route::get('dungeons/getAll', 'DungeonsController@getAll');
+Route::post('dungeons/getAll/{id}', 'DungeonsController@getAll');
 Route::get('dungeons/getByName/{name}', 'DungeonsController@getByName');
 Route::get('dungeons/getByStatus/{status}', 'DungeonsController@getByStatus');
 

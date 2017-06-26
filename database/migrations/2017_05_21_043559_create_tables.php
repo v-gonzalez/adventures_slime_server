@@ -60,7 +60,7 @@ class CreateTables extends Migration
             $table->integer('mana')->unsigned();
             $table->integer('agi')->unsigned();
             $table->integer('str')->unsigned();
-            $table->integer('int')->unsigned();
+            $table->integer('inte')->unsigned();
             $table->integer('phys_dmg')->unsigned();
             $table->integer('magic_dmg')->unsigned();
             $table->integer('armor')->unsigned();

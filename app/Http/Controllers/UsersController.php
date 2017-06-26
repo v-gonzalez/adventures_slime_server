@@ -174,13 +174,18 @@ class UsersController extends Controller
         $data['Error'] = true;
         $data['Message'] = 'Unexpected Error';
 
+        $inputData = $request->input();
+        $inputData['email'] = 'wizzarn@gmail.com';
+        $existingUser = Users::where('nickname','=',$inputData['nickname'])->first();
+        if ($existingUser)
+            return "nickname_taken";
         //Validation rules
         $rules = array(
             'nickname'          => 'required|unique:users',
             'password'          => 'required|string',
             'device_id'         => 'required|string',
-            'phone'             => 'required|string',
-            'email'             => 'required|email'
+            'phone'             => 'string',
+            // 'email'             => 'email'
         );
         $messages = array(
             'nickname.required'     => 'Nickname required',
@@ -197,11 +202,11 @@ class UsersController extends Controller
             $data['Error'] = true;
             $data['Message'] = 'Please verify the information and fill the fields correctly';
             $data['ValidationErrors'] = $validator->messages()->toJson();
-            return null;
+            return $data['ValidationErrors'];
         }
         
         $user = new Users;
-        $inputData = $request->input();
+        
         $inputData['password'] =  Hash::make($inputData['password']);
         $user->fill($inputData);
         $user->save();

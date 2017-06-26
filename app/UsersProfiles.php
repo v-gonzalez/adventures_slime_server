@@ -16,7 +16,7 @@ class UsersProfiles extends Model
 		'mana',
 		'agi',
 		'str',
-		'int',
+		'inte',
 		'phys_dmg',
 		'magic_dmg',
 		'armor',

@@ -11,11 +11,16 @@ use Illuminate\Support\Facades\Hash;
 
 class UsersProfilesController extends Controller
 {
-    public function getByUserId($id){
+    public function getByUserId(Request $request, $id){
         $data['Result'] = null;
         $data['Code'] = 500;
         $data['Error'] = true;
         $data['Message'] = 'Ha ocurrido un error inesperado';
+        $inputData = $request->input();
+        $session = $inputData['session'];
+        $user = Users::where("user_id","=",$id)->where("remember_token","=",$session)->first();
+        if (!$user)
+            return "invalid_session";
 
         $userProfile = UsersProfiles::where("user_id","=",$id)->first();
         if ($userProfile === null){
