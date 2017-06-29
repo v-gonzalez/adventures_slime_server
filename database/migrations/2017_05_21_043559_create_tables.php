@@ -64,7 +64,7 @@ class CreateTables extends Migration
             $table->integer('phys_dmg')->unsigned();
             $table->integer('magic_dmg')->unsigned();
             $table->integer('armor')->unsigned();
-            $table->enum('status', ['active', 'disabled', 'tired','good','energized','hungry','sick','angry']);
+            $table->enum('status', ['active', 'disabled', 'tired','good','hungry','sick','dungeon','challenge']);
             $table->string("sleeping",10);
             $table->date('last_action_date');
             $table->integer('hungry_points')->unsigned();
