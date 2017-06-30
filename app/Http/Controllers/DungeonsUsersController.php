@@ -206,15 +206,23 @@ class DungeonsUsersController extends Controller
         $userProfile = UsersProfiles::where("user_id","=",$inputData["user_id"])->first();
         if (!$userProfile)
             return "invalid_user_profile";
+        if ($userProfile && $userProfile['status'] == 'dungeon')
+            return "already_in_dungeon";
         if ($userProfile['level'] < $dungeonRow['level_required'])
             return "insufficient_level";
 
+
         /* * * * * * * */
 
+        
         $dungeonsUsers = new DungeonsUsers;
         $dungeonsUsers->fill($inputData);
-        $dungeonsUsers->init_date = date("Y-m-d");
-        $dungeonsUsers->end_date = date("Y-m-d", strtotime("+ 1 day"));
+        $dungeonsUsers->init_date = date("Y-m-d h:i:s");
+        $dungeonsUsers->end_date = date("Y-m-d h:i:s", strtotime("+".$dungeonRow['durability']." minutes"));
+        $dungeonsUsers->status = 'active';
+
+        $userProfile['status'] = 'dungeon';
+        $userProfile->save();
         $dungeonsUsers->save();
         $data['Result']     = $dungeonsUsers;
         $data['Code']       = 200;

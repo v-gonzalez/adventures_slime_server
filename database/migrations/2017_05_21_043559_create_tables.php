@@ -63,8 +63,8 @@ class CreateTables extends Migration
             $table->integer('inte')->unsigned();
             $table->integer('phys_dmg')->unsigned();
             $table->integer('magic_dmg')->unsigned();
-            $table->integer('armor')->unsigned();
-            $table->enum('status', ['active', 'disabled', 'tired','good','hungry','sick','dungeon','challenge']);
+            $table->string('armor',50);
+            $table->enum('status', ['active', 'disabled', 'tired','good','hungry','sick','dungeon','challenge','lost_dungeon','lost_challenge']);
             $table->string("sleeping",10);
             $table->date('last_action_date');
             $table->integer('hungry_points')->unsigned();
@@ -83,10 +83,11 @@ class CreateTables extends Migration
             $table->integer('durability')->unsigned(); // in hours
             $table->string('name', 50);
             $table->enum('status', ['easy', 'normal', 'hard','crazy','nightmare']);
-            $table->string('exp_reward_range',50);
-            $table->string('cash_reward_range',50);
-            $table->string('tired_cost_range',50);
-            $table->string('hungry_cost_range',50);
+            $table->string('exp_reward_range',15);
+            $table->string('cash_reward_range',15);
+            $table->string('tired_cost_range',15);
+            $table->string('hungry_cost_range',15);
+            $table->string('life_cost_range',15);
             $table->timestamps();
         });
         Schema::create('items', function (Blueprint $table) {
