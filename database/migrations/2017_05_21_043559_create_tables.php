@@ -56,11 +56,13 @@ class CreateTables extends Migration
             $table->foreign('user_id')->references('user_id')->on('users');
             $table->integer('level')->unsigned();
             $table->integer('experience')->unsigned();
-            $table->integer('hp')->unsigned();
+            $table->integer('hp')->unsigned()->default(100);
+            $table->integer('max_hp')->unsigned()->default(100);
             $table->integer('mana')->unsigned();
             $table->integer('agi')->unsigned();
             $table->integer('str')->unsigned();
             $table->integer('inte')->unsigned();
+            $table->integer('spending_points')->unsigned();
             $table->integer('phys_dmg')->unsigned();
             $table->integer('magic_dmg')->unsigned();
             $table->string('armor',50);

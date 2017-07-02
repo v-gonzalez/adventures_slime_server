@@ -103,10 +103,8 @@ class DungeonUsersChecker extends Command
                 (float)$userProfileModel['armor'] += .15;
                 $userProfileModel['armor'] = number_format($userProfileModel['armor'], 2, '.', '');
 
-                (int)$userProfileModel['agi'] += 2;
-                (int)$userProfileModel['str'] += 5;
-                (int)$userProfileModel['inte'] += 3;
-
+                (int)$userProfileModel['spending_points'] += 5;
+                (int)$userProfileModel['max_hp'] += 10;
                 (int)$userProfileModel['phys_dmg'] += 5;
                 (int)$userProfileModel['magic_dmg'] += 8;
             }
@@ -134,6 +132,7 @@ class DungeonUsersChecker extends Command
                 }
             }
         }
+
         if ($shouldUpdate){
             $value->save();
             $userProfileModel->save();

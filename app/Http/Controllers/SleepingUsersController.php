@@ -153,6 +153,10 @@ class SleepingUsersController extends Controller
                 $userProfile->sleeping = "0";
                 $userProfile->tired_points += $sleepingUser['tired_recovery'];
                 $userProfile->hungry_points += $sleepingUser['hungry_cost'];
+                (int)$userProfile->hp += $res;
+                if ((int)$userProfile->hp > (int)$userProfile->max_hp){
+                    (int)$userProfile->hp = (int)$userProfile->max_hp;
+                }
                 if ($userProfile->tired_points > 100)
                     $userProfile->tired_points = 100;
                 if ($userProfile->hungry_points > 100)

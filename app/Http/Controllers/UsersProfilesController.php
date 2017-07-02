@@ -90,51 +90,51 @@ class UsersProfilesController extends Controller
         }
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         $data['Result'] = null;
         $data['Code'] = 500;
         $data['Error'] = true;
         $data['Message'] = 'Unexpected Error';
 
-        //Validation rules
-        $rules = array(
-            'level' 			=> 'sometimes',
-			'experience' 		=> 'sometimes',
-			'hp' 				=> 'sometimes',
-			'mana' 				=> 'sometimes',
-			'agi' 				=> 'sometimes',
-			'str' 				=> 'sometimes',
-			'int' 				=> 'sometimes',
-			'phys_dmg' 			=> 'sometimes',
-			'magic_dmg' 		=> 'sometimes',
-			'armor' 			=> 'sometimes',
-			'status' 			=> 'sometimes',
-			'last_action_date' 	=> 'sometimes',
-			'hungry_points' 	=> 'sometimes',
-			'tired_points' 		=> 'sometimes',
-			'cash_points' 		=> 'sometimes',
-			'longitued' 		=> 'sometimes',
-			'latitude' 			=> 'sometimes',
-			'shape' 			=> 'sometimes',
-			'color' 			=> 'sometimes',
-			'eye' 				=> 'sometimes'
-        );
-        $validator = Validator::make($request->all(), $rules);
-        //Check for validation rules
-        if ($validator->fails()) {
-            $data['Result'] = null;
-            $data['Code'] = 400;
-            $data['Error'] = true;
-            $data['Message'] = 'Please verify the information and fill the fields correctly';
-            $data['ValidationErrors'] = $validator->messages()->toJson();
+        $inputData = $request->input();
+        $user = Users::where("user_id","=",$inputData['user_id'])->where("remember_token","=",$inputData['session'])->first();
+        if (!$user)
+            return "invalid_session";
+
+        $userProfile = UsersProfiles::where("user_id","=",$inputData['user_id'])->first();
+        if ($userProfile){
+            $userProfile->fill($inputData);
+            $userProfile->save();
+            $data['Result'] = $userProfile;
+            $data['Code'] = 200;
+            $data['Error'] = false;
+            $data['Message'] = 'user profile updated';
+            return response()->json($userProfile, 200);
+        }else{
             return null;
         }
-      
-        $userProfile = UsersProfiles::find($id);
+    }
+    public function updateStats(Request $request)
+    {
+        $data['Result'] = null;
+        $data['Code'] = 500;
+        $data['Error'] = true;
+        $data['Message'] = 'Unexpected Error';
+
+        $inputData = $request->input();
+        $user = Users::where("user_id","=",$inputData['user_id'])->where("remember_token","=",$inputData['session'])->first();
+        if (!$user)
+            return "invalid_session";
+
+        $userProfile = UsersProfiles::where("user_id","=",$inputData['user_id'])->first();
         if ($userProfile){
-            $inputData = $request->input();
-            $userProfile->fill($inputData);
+            $userProfile->str               = $inputData['str'];
+            $userProfile->agi               = $inputData['agi'];
+            $userProfile->inte              = $inputData['inte'];
+            $userProfile->max_hp            = $inputData['max_hp'];
+            $userProfile->spending_points   = $inputData['spending_points'];
+
             $userProfile->save();
             $data['Result'] = $userProfile;
             $data['Code'] = 200;

@@ -25,6 +25,7 @@ Route::get('user/logout/{session}/{id}', 'UsersController@logout');
 Route::resource('usersProfiles', 'UsersProfilesController');
 Route::post('usersProfiles/delete/{id}', 'UsersProfilesController@delete');
 Route::post('usersProfiles/update/{id}', 'UsersProfilesController@update');
+Route::post('usersProfiles/updateStats', 'UsersProfilesController@updateStats');
 Route::post('usersProfiles/store', 'UsersProfilesController@store');
 Route::post('usersProfiles/getByUserId/{id}', 'UsersProfilesController@getByUserId');
 Route::get('usersProfiles/getByUserIds/{ids}', 'UsersProfilesController@getByUserIds');
