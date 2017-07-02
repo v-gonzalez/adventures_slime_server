@@ -10,6 +10,7 @@ use App\UsersProfiles;
 use App\Dungeons;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Console\Commands\DungeonUsersChecker;
 
 class DungeonsUsersController extends Controller
 {
@@ -53,13 +54,35 @@ class DungeonsUsersController extends Controller
         $data['Message'] = 'dungeonsUsers found';
         return response()->json($dungeonsUsers, 200);
     }
-    public function getActiveDungeonByUserId($id){
+    public function getActiveDungeonByUserId(Request $request){
+        $inputData = $request->input();
         $data['Result'] = null;
         $data['Code'] = 500;
         $data['Error'] = true;
         $data['Message'] = 'Unexpected error';
+        
+        $user = Users::where("user_id","=",$inputData['user_id'])->where("remember_token","=",$inputData['session'])->first();
+        if (!$user)
+            return "invalid_session";
 
-        $dungeonsUsers = DungeonsUsers::where("user_id","=",$id)->where("status",'=','active')->first();
+        $dungeonsUsers = DungeonsUsers::where("user_id","=",$inputData['user_id'])->where("status",'=','active')->first();
+        $dungeonModel = Dungeons::where("dungeon_id","=",$dungeonsUsers['dungeon_id'])->first();
+        $dungeonUserModifiedResult = $dungeonsUsers;
+
+
+        $init_date = new \DateTime(date("Y-m-d h:i:s"));
+        $end_date = new \DateTime($dungeonsUsers['end_date']);
+        $min = $init_date->diff($end_date)->format("%r%i");
+        $seconds = $init_date->diff($end_date)->format("%r%s");
+        
+        if ($min < 1  && $seconds <= 0 && $dungeonsUsers['status'] == 'active'){
+            $returningRewards = DungeonUsersChecker::updateMainProcess($dungeonsUsers);
+            $min = -1;
+            $dungeonUserModifiedResult['rewards'] = $returningRewards;
+        }
+        $dungeonUserModifiedResult['name'] = $dungeonModel['name'];
+        $dungeonUserModifiedResult['minutes'] = $min;
+
         if ($dungeonsUsers === null){
             $data['Result'] = null;
             $data['Code'] = 404;
@@ -71,7 +94,7 @@ class DungeonsUsersController extends Controller
         $data['Code'] = 200;
         $data['Error'] = false;
         $data['Message'] = 'dungeonsUsers found';
-        return response()->json($dungeonsUsers, 200);
+        return response()->json($dungeonUserModifiedResult, 200);
     }
     public function getLostDungeonsByUserId($id){
         $data['Result'] = null;
@@ -211,10 +234,6 @@ class DungeonsUsersController extends Controller
         if ($userProfile['level'] < $dungeonRow['level_required'])
             return "insufficient_level";
 
-
-        /* * * * * * * */
-
-        
         $dungeonsUsers = new DungeonsUsers;
         $dungeonsUsers->fill($inputData);
         $dungeonsUsers->init_date = date("Y-m-d h:i:s");

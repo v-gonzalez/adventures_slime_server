@@ -125,7 +125,7 @@ class CreateTables extends Migration
             $table->foreign('user_id')->references('user_id')->on('users');
             $table->integer('item_id')->unsigned();
             $table->foreign('item_id')->references('item_id')->on('items');
-            $table->enum('status', ['active','broken']);
+            $table->enum('status', ['active','broken','unseen']);
             $table->timestamps();
         });
         Schema::create('dungeons_users', function (Blueprint $table) {

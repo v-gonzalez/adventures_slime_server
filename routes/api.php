@@ -100,7 +100,7 @@ Route::post('dungeonsUsers/update/{id}', 'DungeonsUsersController@update');
 Route::post('dungeonsUsers/store', 'DungeonsUsersController@store');
 Route::get('dungeonsUsers/getById/{id}', 'DungeonsUsersController@getById');
 Route::get('dungeonsUsers/getAllDungeonsByUserId/{id}', 'DungeonsUsersController@getAllDungeonsByUserId');
-Route::get('dungeonsUsers/getActiveDungeonByUserId/{id}', 'DungeonsUsersController@getActiveDungeonByUserId');
+Route::post('dungeonsUsers/getActiveDungeonByUserId', 'DungeonsUsersController@getActiveDungeonByUserId');
 Route::get('dungeonsUsers/getLostDungeonsByUserId/{id}', 'DungeonsUsersController@getLostDungeonsByUserId');
 Route::get('dungeonsUsers/getCompleteDungeonsByUserId/{id}', 'DungeonsUsersController@getCompleteDungeonsByUserId');
 Route::post('dungeonsUsers/setCompleted/{id}', 'DungeonsUsersController@setCompleted');
